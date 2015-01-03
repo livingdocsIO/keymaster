@@ -1,3 +1,16 @@
+//     This version is an adapted version of Thomas Fuchs
+//     keymaster.
+//
+//     Repo:
+//     https://github.com/upfrontIO/keymaster
+//
+//     Changelog:
+//     - deal with multiple windows (iframes)
+//     - do not expose global variable
+//
+//
+//     --- Original License ---
+//
 //     keymaster.js
 //     (c) 2011-2013 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
@@ -263,34 +276,29 @@
       object.attachEvent('on'+event, function(){ method(window.event) });
   };
 
-  // set the handlers globally on document
-  addEvent(document, 'keydown', function(event) { dispatch(event) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-  addEvent(document, 'keyup', clearModifier);
+  // Add Window
+  function addWindow(window) {
+    // set the handlers globally on document
+    addEvent(window.document, 'keydown', function(event) { dispatch(event) }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+    addEvent(window.document, 'keyup', clearModifier);
 
-  // reset modifiers to false whenever the window is (re)focused.
-  addEvent(window, 'focus', resetModifiers);
+    // reset modifiers to false whenever the window is (re)focused.
+    addEvent(window, 'focus', resetModifiers);
+  };
 
-  // store previously defined key
-  var previousKey = global.key;
-
-  // restore previously defined key and return reference to our key object
-  function noConflict() {
-    var k = global.key;
-    global.key = previousKey;
-    return k;
-  }
+  addWindow(global);
 
   // set window.key and window.key.set/get/deleteScope, and the default filter
-  global.key = assignKey;
-  global.key.setScope = setScope;
-  global.key.getScope = getScope;
-  global.key.deleteScope = deleteScope;
-  global.key.filter = filter;
-  global.key.isPressed = isPressed;
-  global.key.getPressedKeyCodes = getPressedKeyCodes;
-  global.key.noConflict = noConflict;
-  global.key.unbind = unbindKey;
+  var key = assignKey;
+  key.setScope = setScope;
+  key.getScope = getScope;
+  key.deleteScope = deleteScope;
+  key.filter = filter;
+  key.isPressed = isPressed;
+  key.getPressedKeyCodes = getPressedKeyCodes;
+  key.unbind = unbindKey;
+  key.addIframe = addWindow;
 
-  if(typeof module !== 'undefined') module.exports = assignKey;
+  if(typeof module !== 'undefined') module.exports = key;
 
-})(this);
+})(window);
