@@ -2,7 +2,7 @@
 //     keymaster.
 //
 //     Repo:
-//     https://github.com/upfrontIO/keymaster
+//     https://github.com/livingdocsIO/keymaster
 //
 //     Changelog:
 //     - deal with multiple windows (iframes)
